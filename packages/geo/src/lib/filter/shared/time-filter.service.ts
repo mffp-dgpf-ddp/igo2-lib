@@ -38,7 +38,7 @@ export class TimeFilterService {
           time = newdateformStart + ',' + newdateformEnd;
         } else {
           time = newdateformStart + '/' + newdateformEnd;
-          this.addDuringFilterToSequence(datasource,'date_wmst', newdateformStart,newdateformEnd);
+          this.addDuringFilterToSequence(datasource, 'date_wmst', newdateformStart, newdateformEnd);
         }
       }
       if (newdateformStart === newdateformEnd) {
@@ -47,10 +47,10 @@ export class TimeFilterService {
     } else if (date) {
       newdateform = this.reformatDateTime(date);
       time = newdateform;
-      this.addDuringFilterToSequence(datasource,'date_wmst', newdateform,newdateform);
+      this.addDuringFilterToSequence(datasource, 'date_wmst', newdateform, newdateform);
     }
 
-    //const params = { TIME: time };
+    // const params = { TIME: time };
     this.refreshFilters(datasource);
     // datasource.ol.updateParams(params);
   }
@@ -59,7 +59,7 @@ export class TimeFilterService {
     datasource: WMSDataSource | TileArcGISRestDataSource,
     year: string | [string, string]
   ) {
-    console.log('la',datasource)
+    console.log('la', datasource);
     let time;
     let newdateformStart;
     let newdateformEnd;
@@ -79,7 +79,7 @@ export class TimeFilterService {
           time = newdateformStart + ',' + newdateformEnd;
         } else {
           time = newdateformStart + '/' + newdateformEnd;
-          this.addDuringFilterToSequence(datasource,'date_wmst', newdateformStart,newdateformEnd)
+          this.addDuringFilterToSequence(datasource, 'date_wmst', newdateformStart, newdateformEnd);
         }
       }
       if (newdateformStart === newdateformEnd) {
@@ -123,7 +123,7 @@ export class TimeFilterService {
     const filterid = 'wms-t';
     const interfaceOgcFilters: OgcInterfaceFilterOptions[] = ds.options.ogcFilters.interfaceOgcFilters;
     let arr = interfaceOgcFilters || [];
-    arr = arr.filter(filterid => filterid !== filterid);
+    arr = arr.filter(f => f !== filterid);
     const lastLevel = arr.length === 0 ? 0 : arr[arr.length - 1].level;
 
     arr.push(
