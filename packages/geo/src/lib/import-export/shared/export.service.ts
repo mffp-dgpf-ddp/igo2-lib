@@ -34,7 +34,9 @@ export class ExportService {
 
   constructor(private config: ConfigService) {
     this.ogreUrl = this.config.getConfig('importExport.url');
-    const gpxAggregateInComment = this.config.getConfig('importExport.gpxAggregateInComment');
+    const gpxAggregateInComment = this.config.getConfig(
+      'importExport.gpxAggregateInComment'
+    );
     if (gpxAggregateInComment !== undefined) {
       this.aggregateInComment = gpxAggregateInComment;
     }
@@ -60,7 +62,8 @@ export class ExportService {
 
   private generateFeature(
     olFeatures: OlFeature[],
-    format: ExportFormat): OlFeature[] {
+    format: ExportFormat
+  ): OlFeature[] {
     if (format === ExportFormat.GPX && this.aggregateInComment) {
       return this.generateAggratedFeature(olFeatures);
     }
@@ -188,34 +191,32 @@ export class ExportService {
     projectionIn: string,
     projectionOut: string
   ) {
-    let featuresText: string = new olformat.GeoJSON().writeFeatures(olFeatures, {
-      dataProjection: projectionOut,
-      featureProjection: projectionIn,
-      featureType: 'feature',
-      featureNS: 'http://example.com/feature'
-    });
-
-    if (format === 'CSVsemicolon') {
-      const index = featuresText.indexOf('properties');
-      const substr = featuresText.substring(index, featuresText.length - 1);
-      const substrF = substr.split(',').join(';');
-      featuresText = featuresText.replace(substr, substrF);
-    }
+    let featuresText: string = new olformat.GeoJSON().writeFeatures(
+      olFeatures,
+      {
+        dataProjection: projectionOut,
+        featureProjection: projectionIn,
+        featureType: 'feature',
+        featureNS: 'http://example.com/feature'
+      }
+    );
 
     const url = `${this.ogreUrl}/convertJson`;
     const form = document.createElement('form');
     form.setAttribute('method', 'post');
     form.setAttribute('target', '_blank');
     form.setAttribute('action', url);
-    //form.options = ['--config', 'lco', 'SEPARATOR=SEMICOLON'];
+
     form.acceptCharset = 'UTF-8';
     form.enctype = 'application/x-www-form-urlencoded; charset=utf-8;';
 
-    const options = document.createElement('input');
-    options.setAttribute('type', 'hidden');
-    options.setAttribute('name', 'lco');
-    options.setAttribute('value', 'SEPARATOR=SEMICOLON');
-    form.appendChild(options);
+    if (format === 'CSVsemicolon') {
+      const options = document.createElement('input');
+      options.setAttribute('type', 'hidden');
+      options.setAttribute('name', 'lco');
+      options.setAttribute('value', 'SEPARATOR=SEMICOLON');
+      form.appendChild(options);
+    }
 
     const geojsonField = document.createElement('input');
     geojsonField.setAttribute('type', 'hidden');
@@ -246,7 +247,6 @@ export class ExportService {
     outputFormatField.setAttribute('value', ogreFormat);
     form.appendChild(outputFormatField);
 
-    console.log(form);
     document.body.appendChild(form);
     form.submit();
     document.body.removeChild(form);
