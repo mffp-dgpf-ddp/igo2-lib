@@ -9,7 +9,7 @@ import { map } from 'rxjs/operators';
 
 import olLayer from 'ol/layer/Layer';
 
-import { AuthInterceptor } from '@igo2/auth';
+import { AuthInterceptor, MtqInterceptor } from '@igo2/auth';
 import { SubjectStatus } from '@igo2/utils';
 
 import { DataSource, Legend } from '../../../datasource';
@@ -115,7 +115,8 @@ export abstract class Layer {
 
   constructor(
     public options: LayerOptions,
-    protected authInterceptor?: AuthInterceptor
+    protected authInterceptor?: AuthInterceptor,
+    protected mtqInterceptor?: MtqInterceptor
   ) {
     this.dataSource = options.source;
 

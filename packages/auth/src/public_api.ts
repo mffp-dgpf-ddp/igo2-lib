@@ -9,6 +9,7 @@ export * from './lib/shared/auth.guard';
 export * from './lib/shared/admin.guard';
 export * from './lib/shared/profils.guard';
 export * from './lib/shared/auth.interceptor';
+export * from './lib/shared/mtq.interceptor';
 export * from './lib/shared/auth.interface';
 export * from './lib/shared/protected.directive';
 export * from './lib/shared/token.service';

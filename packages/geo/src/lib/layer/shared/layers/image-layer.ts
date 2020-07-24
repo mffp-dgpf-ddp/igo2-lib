@@ -1,7 +1,7 @@
 import olLayerImage from 'ol/layer/Image';
 import olSourceImage from 'ol/source/Image';
 
-import { AuthInterceptor } from '@igo2/auth';
+import { AuthInterceptor, MtqInterceptor } from '@igo2/auth';
 
 import { ImageWatcher } from '../../utils';
 import { IgoMap } from '../../../map';
@@ -20,9 +20,10 @@ export class ImageLayer extends Layer {
 
   constructor(
     options: ImageLayerOptions,
-    public authInterceptor?: AuthInterceptor
+    public authInterceptor?: AuthInterceptor,
+    public mtqInterceptor?: MtqInterceptor
   ) {
-    super(options, authInterceptor);
+    super(options, authInterceptor, mtqInterceptor);
     this.watcher = new ImageWatcher(this);
     this.status$ = this.watcher.status$;
   }
@@ -39,6 +40,11 @@ export class ImageLayer extends Layer {
       });
     }
 
+    if (this.mtqInterceptor) {
+      (image.getSource() as any).setImageLoadFunction((tile, src) => {
+        this.customLoader(tile, src);
+      });
+    }
     return image;
   }
 
@@ -55,8 +61,15 @@ export class ImageLayer extends Layer {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', src);
 
-    const intercepted = this.authInterceptor.interceptXhr(xhr, src);
-    if (!intercepted) {
+    // const intercepted = this.authInterceptor.interceptXhr(xhr, src);
+    // if (!intercepted) {
+    //   xhr.abort();
+    //   tile.getImage().src = src;
+    //   return;
+    // }
+
+    const mtqIntercepted = this.mtqInterceptor.interceptXhr(xhr);
+    if (!mtqIntercepted) {
       xhr.abort();
       tile.getImage().src = src;
       return;

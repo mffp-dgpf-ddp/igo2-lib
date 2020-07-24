@@ -13,6 +13,7 @@ import { IgoLanguageModule, StorageService } from '@igo2/core';
 import { AuthStorageService } from './shared/storage.service';
 import { ProtectedDirective } from './shared/protected.directive';
 import { AuthInterceptor } from './shared/auth.interceptor';
+import { MtqInterceptor } from './shared/mtq.interceptor';
 
 import { AuthInternComponent } from './auth-form/auth-intern.component';
 import { AuthFormComponent } from './auth-form/auth-form.component';
@@ -42,6 +43,11 @@ export class IgoAuthModule {
     return {
       ngModule: IgoAuthModule,
       providers: [
+        {
+          provide: HTTP_INTERCEPTORS,
+          useClass: MtqInterceptor,
+          multi: true
+        },
         {
           provide: HTTP_INTERCEPTORS,
           useClass: AuthInterceptor,
