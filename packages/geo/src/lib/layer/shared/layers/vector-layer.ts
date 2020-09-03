@@ -70,12 +70,12 @@ export class VectorLayer extends Layer {
     if (url) {
       if (this.authInterceptor) {
         vectorSource.setLoader((extent, resolution, proj) => {
-          this.customLoader(vectorSource, url, extent, resolution, proj);
+          this.customLoader(vectorSource, url, this.authInterceptor, extent, resolution, proj);
         });
       }
       if (this.mtqInterceptor) {
         vectorSource.setLoader((extent, resolution, proj) => {
-          this.customLoader(vectorSource, url, extent, resolution, proj);
+          this.customLoader(vectorSource, url, this.mtqInterceptor, extent, resolution, proj);
         });
       }
     }
@@ -219,28 +219,15 @@ export class VectorLayer extends Layer {
     unByKey(this.trackFeatureListenerId);
   }
 
-  private customLoader(vectorSource, url, extent, resolution, proj) {
+  private customLoader(vectorSource, url, interceptor, extent, resolution, proj) {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', typeof url === 'function' ? url(extent, resolution, proj) : url);
 
-    // const intercepted = this.authInterceptor.interceptXhr(xhr, src);
-    // if (!intercepted) {
-    //   xhr.abort();
-    //   tile.getImage().src = src;
-    //   return;
-    // }
-
-    const mtqIntercepted = this.mtqInterceptor.interceptXhr(xhr);
-    if (!mtqIntercepted) {
+    const intercepted = interceptor.interceptXhr(xhr);
+    if (!intercepted) {
       xhr.abort();
-      // tile.getImage().src = src;
       return;
     }
-
-
-
-
-
     const onError = () => vectorSource.removeLoadedExtent(extent);
     xhr.onerror = onError;
     xhr.onload = () => {
