@@ -139,7 +139,7 @@ export class LayerService {
           layerOptions.styleByAttribute
         );
       };
-      olLayer = new VectorLayer(layerOptions);
+      olLayer = new VectorLayer(layerOptions, this.authInterceptor, this.mtqInterceptor);
     }
 
     if (layerOptions.source instanceof ClusterDataSource) {
@@ -152,7 +152,7 @@ export class LayerService {
           baseStyle
         );
       };
-      olLayer = new VectorLayer(layerOptions);
+      olLayer = new VectorLayer(layerOptions, this.authInterceptor, this.mtqInterceptor);
     }
 
     const layerOptionsOl = Object.assign({}, layerOptions, {
@@ -160,7 +160,7 @@ export class LayerService {
     });
 
     if (!olLayer) {
-      olLayer = new VectorLayer(layerOptionsOl);
+      olLayer = new VectorLayer(layerOptionsOl, this.authInterceptor, this.mtqInterceptor);
     }
 
     this.applyMapboxStyle(olLayer, layerOptionsOl as any);

@@ -15,6 +15,7 @@ import { VectorWatcher } from '../../utils';
 import { IgoMap } from '../../../map';
 import { Layer } from './layer';
 import { VectorLayerOptions } from './vector-layer.interface';
+import { AuthInterceptor, MtqInterceptor } from '@igo2/auth';
 
 export class VectorLayer extends Layer {
   public dataSource:
@@ -36,8 +37,11 @@ export class VectorLayer extends Layer {
     return this.options.exportable !== false;
   }
 
-  constructor(options: VectorLayerOptions) {
-    super(options);
+  constructor(
+    options: VectorLayerOptions,
+    public authInterceptor?: AuthInterceptor,
+    public mtqInterceptor?: MtqInterceptor) {
+    super(options, authInterceptor, mtqInterceptor);
     this.watcher = new VectorWatcher(this);
     this.status$ = this.watcher.status$;
   }
@@ -60,7 +64,22 @@ export class VectorLayer extends Layer {
       this.enableTrackFeature(this.options.trackFeature);
     }
 
-    return new olLayerVector(olOptions);
+    const vector = new olLayerVector(olOptions);
+    const vectorSource = vector.getSource() as olSourceVector;
+    const url = vectorSource.getUrl();
+    if (url) {
+      if (this.authInterceptor) {
+        vectorSource.setLoader((extent, resolution, proj) => {
+          this.customLoader(vectorSource, url, extent, resolution, proj);
+        });
+      }
+      if (this.mtqInterceptor) {
+        vectorSource.setLoader((extent, resolution, proj) => {
+          this.customLoader(vectorSource, url, extent, resolution, proj);
+        });
+      }
+    }
+    return vector;
   }
 
   protected flash(feature) {
@@ -106,11 +125,11 @@ export class VectorLayer extends Layer {
               .getStroke()
               .setWidth(
                 easeOut(elapsedRatio) *
-                  (styleClone
-                    .getImage()
-                    .getStroke()
-                    .getWidth() *
-                    3)
+                (styleClone
+                  .getImage()
+                  .getStroke()
+                  .getWidth() *
+                  3)
               );
           }
           if (styleClone.getStroke()) {
@@ -156,7 +175,7 @@ export class VectorLayer extends Layer {
     if (map === undefined) {
       this.watcher.unsubscribe();
     } else {
-      this.watcher.subscribe(() => {});
+      this.watcher.subscribe(() => { });
     }
     super.setMap(map);
   }
@@ -198,5 +217,40 @@ export class VectorLayer extends Layer {
 
   public disableTrackFeature(id?: string | number) {
     unByKey(this.trackFeatureListenerId);
+  }
+
+  private customLoader(vectorSource, url, extent, resolution, proj) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', typeof url === 'function' ? url(extent, resolution, proj) : url);
+
+    // const intercepted = this.authInterceptor.interceptXhr(xhr, src);
+    // if (!intercepted) {
+    //   xhr.abort();
+    //   tile.getImage().src = src;
+    //   return;
+    // }
+
+    const mtqIntercepted = this.mtqInterceptor.interceptXhr(xhr);
+    if (!mtqIntercepted) {
+      xhr.abort();
+      // tile.getImage().src = src;
+      return;
+    }
+
+
+
+
+
+    const onError = () => vectorSource.removeLoadedExtent(extent);
+    xhr.onerror = onError;
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        vectorSource.addFeatures(
+          vectorSource.getFormat().readFeatures(xhr.responseText));
+      } else {
+        onError();
+      }
+    };
+    xhr.send();
   }
 }
