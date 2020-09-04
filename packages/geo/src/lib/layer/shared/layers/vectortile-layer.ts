@@ -29,51 +29,69 @@ export class VectorTileLayer extends Layer {
       source: this.options.source.ol as olSourceVectorTile
     });
 
-    const vectorTile =  new olLayerVectorTile(olOptions);
+    const vectorTile = new olLayerVectorTile(olOptions);
     const vectorTileSource = vectorTile.getSource() as olSourceVectorTile;
 
-    if (this.authInterceptor) {
-      vectorTileSource.setTileLoadFunction((tile, src) => {
-        this.customLoader(tile, src);
-      });
-    }
+    // if (this.authInterceptor) {
+    //   vectorTileSource.setTileLoadFunction((tile, src) => {
+    //     this.customLoader(tile, src);
+    //   });
+    // }
+
+    // if (this.mtqInterceptor) {
+    //   vectorTileSource.setTileLoadFunction((tile, url) => {
+    //     const loader = xhr(url, tile.getFormat(), tile.onLoad.bind(tile), tile.onError.bind(tile));
+    //     tile.setLoader(loader);
+    //   });
+    // }
 
     if (this.mtqInterceptor) {
-      vectorTileSource.setTileLoadFunction((tile, src) => {
-        this.customLoader(tile, src);
-      });
-    }
+      vectorTileSource.setTileLoadFunction((tile, url) => {
 
+        // tile.setLoader(this.customLoader(tile, url, this.mtqInterceptor, vectorTileSource))
+        const loader = this.loadFeaturesXhr(url, tile.getFormat(), tile.onLoad.bind(tile));
+        tile.setLoader(loader);
+      }
+      );
+
+    }
     return vectorTile;
   }
 
-  private customLoader(tile, src) {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', src);
-
-    // const intercepted = this.authInterceptor.interceptXhr(xhr, src);
-    // if (!intercepted) {
-    //   xhr.abort();
-    //   tile.getImage().src = src;
-    //   return;
-    // }
-
-    const mtqIntercepted = this.mtqInterceptor.interceptXhr(xhr);
-    if (!mtqIntercepted) {
-      xhr.abort();
-      tile.getImage().src = src;
-      return;
-    }
-
-    xhr.responseType = 'arraybuffer';
-
-    xhr.onload = function() {
-      const arrayBufferView = new Uint8Array((this as any).response);
-      const blob = new Blob([arrayBufferView], { type: 'image/png' });
-      const urlCreator = window.URL;
-      const imageUrl = urlCreator.createObjectURL(blob);
-      tile.getImage().src = imageUrl;
-    };
-    xhr.send();
+  loadFeaturesXhr(url, format, success) {
+    return ((extent, resolution, projection) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', typeof url === 'function' ? url(extent, resolution, projection) : url, true);
+      console.log(format, format.getType());
+      // if (format.getType() === FormatType.ARRAY_BUFFER) {
+      //   xhr.responseType = 'arraybuffer';
+      // }
+      xhr.onload = (event) => {
+        if (!xhr.status || xhr.status >= 200 && xhr.status < 300) {
+          const type = format.getType();
+          let source = void 0;
+          /*if (type == FormatType.JSON || type == FormatType.TEXT) {
+            source = xhr.responseText;
+          }
+          else if (type == FormatType.XML) {
+            source = xhr.responseXML;
+            if (!source) {
+              source = new DOMParser().parseFromString(xhr.responseText, 'application/xml');
+            }
+          }
+          else if (type == FormatType.ARRAY_BUFFER) {*/
+          source = (xhr.response);
+          // }
+          if (source) {
+            success.call(this, format.readFeatures(source, {
+              extent,
+              featureProjection: projection
+            }), format.readProjection(source));
+          }
+        }
+      };
+      xhr.send();
+    });
   }
+
 }
