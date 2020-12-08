@@ -16,6 +16,12 @@ export interface TimeFilterOptions {
   timeInterval?: number;
   current?: boolean;
   enabled?: boolean;
+  forcedValues?: ForcedValue[];
+}
+
+export interface ForcedValue {
+  value: any;
+  alias?: string;
 }
 
 export interface TimeFilterableDataSourceOptions extends WMSDataSourceOptions {

@@ -1,3 +1,38 @@
+<div *ngIf="type ==='forced'">
+  <button
+    [disabled]= "!options.enabled || !layer.visible || forcedValue === forcedValues[0] "
+    mat-icon-button
+    igoStopPropagation
+    panelLeftButton
+    [matTooltip]="'previous'"
+    matTooltipShowDelay="500"
+    (click)="previousForcedValue()">
+    <mat-icon svgIcon="chevron-left"></mat-icon>
+  </button>
+  <span *ngIf= "options.enabled" class="date-below">{{forcedValue.alias || forcedValue.value}}</span>
+  <button
+    [disabled]= "!options.enabled || !layer.visible || forcedValue === forcedValues[forcedValues.length - 1]"
+    mat-icon-button
+    igoStopPropagation
+    panelRightButton
+    [matTooltip]="'next'"
+    matTooltipShowDelay="500"
+    (click)="nextForcedValue()">
+    <mat-icon svgIcon="chevron-right"></mat-icon>
+  </button>
+  <div #actions class="igo-layer-actions-container">
+    <mat-slide-toggle (change)="toggleFilterState()" tooltip-position="below" matTooltipShowDelay="500"
+      [matTooltip]="'igo.geo.filter.toggleFilterState' | translate" [color]="color" [checked]="options.enabled"
+      [disabled]="!layer.visible">
+    </mat-slide-toggle>
+    <button [disabled]="!options.enabled  || !layer.visible" mat-icon-button color="primary" (click)="resetForcedValue($event)">
+      <mat-icon svgIcon="{{resetIcon}}"></mat-icon>
+    </button>
+  </div>
+
+</div>
+
+
 <div *ngIf="style === 'calendar' && type !=='year'">
   <div *ngIf="!isRange" class="igo-col igo-col-100 igo-col-100-m">
     <mat-form-field>
@@ -112,7 +147,7 @@
     </div>
   </div>
 
-<div *ngIf="style === 'slider' && type !== 'year'" class="igo-col igo-col-100 igo-col-100-m">
+<div *ngIf="type !== 'forced' && style === 'slider' && type !== 'year'" class="igo-col igo-col-100 igo-col-100-m">
   <mat-slider
       id="time-slider"
       tickInterval="auto"

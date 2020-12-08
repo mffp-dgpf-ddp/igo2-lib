@@ -3,6 +3,7 @@ export enum TimeFilterType {
     TIME = 'time',
     DATETIME = 'datetime',
     YEAR = 'year',
+    FORCED = 'forced',
 }
 
 export enum TimeFilterStyle {

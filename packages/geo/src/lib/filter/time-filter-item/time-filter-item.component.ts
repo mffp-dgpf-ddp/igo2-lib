@@ -29,6 +29,10 @@ export class TimeFilterItemComponent {
     this.timeFilterService.filterByYear(this.datasource, year);
   }
 
+  handleForcedChange(forcedValue: string) {
+    this.datasource.ol.updateParams({TIME: forcedValue});
+  }
+
   handleDateChange(date: Date | [Date, Date]) {
     this.timeFilterService.filterByDate(this.datasource, date);
   }

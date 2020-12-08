@@ -11,7 +11,7 @@ import { MatSlider } from '@angular/material/slider';
 import * as moment from 'moment';
 
 import { Layer } from '../../layer/shared/layers/layer';
-import { TimeFilterOptions } from '../shared/time-filter.interface';
+import { ForcedValue, TimeFilterOptions } from '../shared/time-filter.interface';
 import { TimeFilterType, TimeFilterStyle } from '../shared/time-filter.enum';
 
 @Component({
@@ -31,6 +31,7 @@ export class TimeFilterFormComponent implements OnInit {
   public year: any;
   public startYear: any;
   public endYear: any;
+  public forcedValueIndex: number = 0;
   public initStartYear: any;
   public initEndYear: any;
   public listYears: Array<string> = [];
@@ -63,6 +64,8 @@ export class TimeFilterFormComponent implements OnInit {
   @Output() change: EventEmitter<Date | [Date, Date]> = new EventEmitter();
   @Output()
   yearChange: EventEmitter<string | [string, string]> = new EventEmitter();
+  @Output()
+  forcedChange: EventEmitter<string> = new EventEmitter();
   @ViewChild(MatSlider) mySlider;
 
   get type(): TimeFilterType {
@@ -112,6 +115,14 @@ export class TimeFilterFormComponent implements OnInit {
     return this.options.timeInterval === undefined
       ? 2000
       : this.options.timeInterval;
+  }
+
+  get forcedValue(): ForcedValue {
+    return this.forcedValues[this.forcedValueIndex];
+  }
+
+  get forcedValues(): ForcedValue[] {
+    return this.options.forcedValues;
   }
 
   get min(): Date {
@@ -178,6 +189,10 @@ export class TimeFilterFormComponent implements OnInit {
     } else {
       this.storeCurrentFilterValue();
       this.yearChange.emit(undefined); // TODO: FIX THIS for ALL OTHER TYPES STYLES OR RANGE.
+    }
+
+    if (this.type === TimeFilterType.FORCED) {
+      this.options.enabled = false;
     }
   }
 
@@ -310,12 +325,21 @@ export class TimeFilterFormComponent implements OnInit {
         this.type === TimeFilterType.YEAR
       ) {
         this.yearChange.emit(this.year);
+      } else if (this.type === TimeFilterType.FORCED) {
+        this.forcedChange.emit(this.forcedValue.value);
       }
+
     } else {
       this.stopFilter();
       this.storeCurrentFilterValue();
       this.change.emit(undefined); // TODO: FIX THIS for ALL OTHER TYPES STYLES OR RANGE.
+      this.forcedChange.emit(undefined);
     }
+  }
+
+  resetForcedValue(event: any) {
+     this.forcedValueIndex = 0;
+     this.forcedChange.emit(this.forcedValue.value);
   }
 
   resetFilter(event: any) {
@@ -415,6 +439,23 @@ export class TimeFilterFormComponent implements OnInit {
       return this.year;
     } else {
       return this.date === undefined ? this.min.getTime() : this.date.getTime();
+    }
+  }
+
+
+  previousForcedValue() {
+    let i = this.forcedValues.indexOf(this.forcedValue);
+    if (this.forcedValues[--i]) {
+      this.forcedValueIndex = this.forcedValueIndex - 1;
+      this.forcedChange.emit(this.forcedValue.value);
+    }
+  }
+  nextForcedValue() {
+    let i = this.forcedValues.indexOf(this.forcedValue);
+    const nextResult = this.forcedValues[++i];
+    if (nextResult) {
+      this.forcedValueIndex = this.forcedValueIndex + 1;
+      this.forcedChange.emit(this.forcedValue.value);
     }
   }
 
