@@ -194,15 +194,25 @@ export class TimeFilterFormComponent implements OnInit, OnDestroy {
       this.yearChange.emit(undefined); // TODO: FIX THIS for ALL OTHER TYPES STYLES OR RANGE.
     }
 
-    if (this.type === TimeFilterType.FORCED) {
+    if (this.type === TimeFilterType.FORCED && !this.options.value) {
       this.options.enabled = false;
+    } else {
+      const a = this.forcedValues.find(fv => fv.value === this.options.value);
+      this.forcedValueIndex = this.forcedValues.indexOf(a);
+      this.forcedValueSelect = a;
+      if (this.options.enabled) {
+        this.forcedChange.emit(this.options.value);
+      } else {
+        this.forcedChange.emit(undefined);
+      }
     }
   }
 
   ngOnDestroy(): void {
 
     if (this.type === TimeFilterType.FORCED) {
-      this.forcedChange.emit(undefined);
+      this.options.value = this.forcedValue.value;
+     // this.forcedChange.emit(undefined);
     }
   }
 
