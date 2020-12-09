@@ -1,5 +1,13 @@
 <div *ngIf="type ==='forced'">
-  <button
+  <mat-select  [(ngModel)]="forcedValueSelect"
+    [disabled]= "!options.enabled || !layer.visible" 
+    placeholder="{{forcedValueSelect}}" (selectionChange)="handleForcedValueChange($event)">
+    <mat-option [value]="fv" *ngFor="let fv of forcedValues">{{fv.alias || fv.value}}</mat-option>
+  </mat-select>
+  
+  <!-- <span *ngIf= "options.enabled" class="date-below">{{forcedValue.alias || forcedValue.value}}</span> -->
+  <div #actions class="igo-layer-actions-container">
+    <button
     [disabled]= "!options.enabled || !layer.visible || forcedValue === forcedValues[0] "
     mat-icon-button
     igoStopPropagation
@@ -9,8 +17,14 @@
     (click)="previousForcedValue()">
     <mat-icon svgIcon="chevron-left"></mat-icon>
   </button>
-  <span *ngIf= "options.enabled" class="date-below">{{forcedValue.alias || forcedValue.value}}</span>
-  <button
+    <mat-slide-toggle (change)="toggleFilterState()" tooltip-position="below" matTooltipShowDelay="500"
+      [matTooltip]="'igo.geo.filter.toggleFilterState' | translate" [color]="color" [checked]="options.enabled"
+      [disabled]="!layer.visible">
+    </mat-slide-toggle>
+    <button [disabled]="!options.enabled  || !layer.visible" mat-icon-button color="primary" (click)="resetForcedValue($event)">
+      <mat-icon svgIcon="{{resetIcon}}"></mat-icon>
+    </button>
+    <button
     [disabled]= "!options.enabled || !layer.visible || forcedValue === forcedValues[forcedValues.length - 1]"
     mat-icon-button
     igoStopPropagation
@@ -20,14 +34,6 @@
     (click)="nextForcedValue()">
     <mat-icon svgIcon="chevron-right"></mat-icon>
   </button>
-  <div #actions class="igo-layer-actions-container">
-    <mat-slide-toggle (change)="toggleFilterState()" tooltip-position="below" matTooltipShowDelay="500"
-      [matTooltip]="'igo.geo.filter.toggleFilterState' | translate" [color]="color" [checked]="options.enabled"
-      [disabled]="!layer.visible">
-    </mat-slide-toggle>
-    <button [disabled]="!options.enabled  || !layer.visible" mat-icon-button color="primary" (click)="resetForcedValue($event)">
-      <mat-icon svgIcon="{{resetIcon}}"></mat-icon>
-    </button>
   </div>
 
 </div>

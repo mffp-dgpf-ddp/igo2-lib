@@ -4,7 +4,8 @@ import {
   Input,
   Output,
   EventEmitter,
-  ViewChild
+  ViewChild,
+  OnDestroy
 } from '@angular/core';
 import { DateAdapter } from '@angular/material/core';
 import { MatSlider } from '@angular/material/slider';
@@ -19,7 +20,7 @@ import { TimeFilterType, TimeFilterStyle } from '../shared/time-filter.enum';
   templateUrl: './time-filter-form.component.html',
   styleUrls: ['./time-filter-form.component.scss']
 })
-export class TimeFilterFormComponent implements OnInit {
+export class TimeFilterFormComponent implements OnInit, OnDestroy {
   @Input() layer: Layer;
 
   @Input() options: TimeFilterOptions;
@@ -117,6 +118,8 @@ export class TimeFilterFormComponent implements OnInit {
       : this.options.timeInterval;
   }
 
+  public forcedValueSelect: ForcedValue;
+
   get forcedValue(): ForcedValue {
     return this.forcedValues[this.forcedValueIndex];
   }
@@ -193,6 +196,13 @@ export class TimeFilterFormComponent implements OnInit {
 
     if (this.type === TimeFilterType.FORCED) {
       this.options.enabled = false;
+    }
+  }
+
+  ngOnDestroy(): void {
+
+    if (this.type === TimeFilterType.FORCED) {
+      this.forcedChange.emit(undefined);
     }
   }
 
@@ -316,6 +326,9 @@ export class TimeFilterFormComponent implements OnInit {
   }
 
   toggleFilterState() {
+    if (!this.forcedValueSelect) {
+      this.forcedValueSelect = this.forcedValue;
+    }
     this.options.enabled = !this.options.enabled;
 
     if (this.options.enabled) {
@@ -442,12 +455,19 @@ export class TimeFilterFormComponent implements OnInit {
     }
   }
 
+  handleForcedValueChange(event){
+    this.forcedValueSelect = event.value;
+    this.forcedValueIndex = this.forcedValues.indexOf(event.value);
+    this.forcedChange.emit(this.forcedValue.value);
+  }
+
 
   previousForcedValue() {
     let i = this.forcedValues.indexOf(this.forcedValue);
     if (this.forcedValues[--i]) {
       this.forcedValueIndex = this.forcedValueIndex - 1;
       this.forcedChange.emit(this.forcedValue.value);
+      this.forcedValueSelect = this.forcedValue;
     }
   }
   nextForcedValue() {
@@ -456,6 +476,7 @@ export class TimeFilterFormComponent implements OnInit {
     if (nextResult) {
       this.forcedValueIndex = this.forcedValueIndex + 1;
       this.forcedChange.emit(this.forcedValue.value);
+      this.forcedValueSelect = this.forcedValue;
     }
   }
 
