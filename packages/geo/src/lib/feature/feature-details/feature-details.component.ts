@@ -8,7 +8,7 @@ import {
   OnInit,
   OnDestroy
 } from '@angular/core';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -95,8 +95,20 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  htmlSanitizer(value): SafeResourceUrl {
+  resourceUrlByPassSanitizer(value): SafeResourceUrl {
     return this.sanitizer.bypassSecurityTrustResourceUrl(value);
+  }
+
+  htmlByPassSanitizer(value): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(value);
+  }
+
+  validateHtml(value): SafeHtml {
+    const valToCheck = value.split(`onclick="`)[1]
+    if (valToCheck && /^\bcallAngularFunction\(\'\w+\.pdf\'\)\; return false\;/g.test(valToCheck)) {
+      value = this.htmlByPassSanitizer(value);
+    }
+    return value
   }
 
   isObject(value) {

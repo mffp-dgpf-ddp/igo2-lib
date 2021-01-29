@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
 import * as jsPDF from 'jspdf';
 import { Platform } from '@ionic/angular';
 import { File } from '@ionic-native/file/ngx';
@@ -19,6 +21,7 @@ export class PrintIonicService extends PrintService {
   year: string;
 
   constructor(
+    http: HttpClient,
     messageService: MessageService,
     activityService: ActivityService,
     languageService: LanguageService,
@@ -26,10 +29,11 @@ export class PrintIonicService extends PrintService {
     private fileOpener: FileOpener,
     private file: File
   ) {
-    super(messageService, activityService, languageService);
+    super(
+      http, messageService, activityService, languageService);
   }
 
-  protected saveDoc(doc: jsPDF) {
+  protected async saveDoc(doc: jsPDF) {
     if (this.platform.is('cordova')) {
       const docOutput = doc.output();
       const buffer = new ArrayBuffer(docOutput.length);
@@ -43,7 +47,7 @@ export class PrintIonicService extends PrintService {
       this.file.writeFile(directory, fileName, buffer, { replace: true }).then((success) =>
         this.fileOpener.open(directory + '/' + fileName, 'application/pdf'));
     } else {
-        super.saveDoc(doc);
+        await super.saveDoc(doc);
     }
   }
   private setDate() {
