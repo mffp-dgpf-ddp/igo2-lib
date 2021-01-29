@@ -201,7 +201,7 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
               for (const feature of featureOL.get('features')) {
                 const newFeature = featureFromOl(feature, this.map.projection);
                 newFeature.meta = {
-                  title: feature.values_.nom,
+                  title: feature.values_._title || feature.values_.nom,
                   id: layerOL.values_._layer.id + '.' + feature.id_,
                   icon: feature.values_._icon,
                   sourceTitle: layerOL.values_.title,

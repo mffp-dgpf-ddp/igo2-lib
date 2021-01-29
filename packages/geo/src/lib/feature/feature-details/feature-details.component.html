@@ -14,7 +14,7 @@
         {{property.key }}
       </td>
 
-      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && !isUrl(property.value)" [innerHTML]="property.value">
+      <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && !isUrl(property.value)" [innerHTML]="validateHtml(property.value)">
       </td>
 
       <td *ngIf="feature.properties.target === undefined && !isObject(property.value) && isUrl(property.value)">
@@ -31,4 +31,4 @@
   </tbody>
 </table>
 
-<iframe *ngIf="feature && isObject(feature.properties) && feature.properties.target === 'iframe'" [src]="htmlSanitizer(feature.properties.url)"></iframe>
+<iframe *ngIf="feature && isObject(feature.properties) && feature.properties.target === 'iframe'" [src]="resourceUrlByPassSanitizer(feature.properties.url)"></iframe>
