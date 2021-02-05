@@ -13,6 +13,13 @@
     <img *ngIf="context.iconImage" [src]="context.iconImage">
   </button>
   <h4 matLine>{{context.title}}</h4>
+  <button
+      *ngIf="defaultContextSetting"
+      mat-icon-button
+      [color]="defaultUri === context.uri ? 'primary' : 'default'"
+      (click)="defineDefaultContext(context.title, context.uri)">
+      <mat-icon svgIcon="star"></mat-icon>
+  </button>
 
   <div *ngIf="auth.authenticated"
        igoStopPropagation
