@@ -48,10 +48,12 @@ export class ContextService {
   public contexts$ = new BehaviorSubject<ContextsList>({ ours: [] });
   public defaultContextId$ = new BehaviorSubject<string>(undefined);
   public editedContext$ = new BehaviorSubject<DetailedContext>(undefined);
+  public defaultContextSetting = new BehaviorSubject<boolean>(false);
   public importedContext: Array<DetailedContext> = [];
+  public defaultUri: string;
   private mapViewFromRoute: ContextMapView = {};
-  private options: ContextServiceOptions;
-  private baseUrl: string;
+  protected options: ContextServiceOptions;
+  protected baseUrl: string;
   private contextMessage: Notification;
 
   // Until the ContextService is completely refactored, this is needed
@@ -69,11 +71,11 @@ export class ContextService {
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService,
+    protected authService: AuthService,
     private languageService: LanguageService,
-    private config: ConfigService,
     private messageService: MessageService,
-    @Optional() private route: RouteService
+    protected config: ConfigService,
+    @Optional() protected route: RouteService
   ) {
     this.options = Object.assign(
       {
@@ -653,7 +655,7 @@ export class ContextService {
     return layers;
   }
 
-  private readParamsFromRoute() {
+  protected readParamsFromRoute() {
     if (!this.route) {
       return;
     }
@@ -716,7 +718,7 @@ export class ContextService {
     throw error;
   }
 
-  private handleContextsChange(
+  protected handleContextsChange(
     contexts: ContextsList,
     keepCurrentContext = true
   ) {
