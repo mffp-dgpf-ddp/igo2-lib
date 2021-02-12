@@ -104,7 +104,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
   }
 
   validateHtml(value): SafeHtml {
-    const valToCheck = value.split(`onclick="`)[1]
+    const valToCheck = value.toString().split(`onclick="`)[1]
     if (valToCheck && /^\bcallAngularFunction\(\'\w+\.pdf\'\)\; return false\;/g.test(valToCheck)) {
       value = this.htmlByPassSanitizer(value);
     }
