@@ -334,6 +334,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
         dialogRef.afterClosed().subscribe (() => {
             dialogRef.componentInstance.onOk$.subscribe(label => {
+                console.log('allo')
                 this.drawLabel = label;
                 this.updateLabelOfOlGeometry(olGeometry, label);
                 this.onDrawEnd(olGeometry);
@@ -352,7 +353,9 @@ export class DrawComponent implements OnInit, OnDestroy {
         .subscribe((olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle) => this.onDrawStart(olGeometry));
         this.drawEnd$$ = drawControl.end$
         .subscribe((olGeometry: OlPoint | OlLineString | OlPolygon | OlCircle) => {
-            this.openDialog(olGeometry);
+            setTimeout(() => {
+                this.openDialog(olGeometry);
+            }, 200);
         });
 
         drawControl.setOlMap(this.map.ol);
