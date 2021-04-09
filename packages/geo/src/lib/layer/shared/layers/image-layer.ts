@@ -1,7 +1,7 @@
 import olLayerImage from 'ol/layer/Image';
 import olSourceImage from 'ol/source/Image';
 
-import { AuthInterceptor } from '@igo2/auth';
+import { AuthInterceptor, TokenService } from '@igo2/auth';
 
 import { ImageWatcher } from '../../utils';
 import { IgoMap } from '../../../map';
@@ -21,6 +21,7 @@ export class ImageLayer extends Layer {
 
   constructor(
     options: ImageLayerOptions,
+    private tokenService: TokenService,
     public authInterceptor?: AuthInterceptor
   ) {
     super(options, authInterceptor);
@@ -53,15 +54,37 @@ export class ImageLayer extends Layer {
   }
 
   private customLoader(tile, src, interceptor) {
+    let WMSsource: WMSDataSource
     const xhr = new XMLHttpRequest();
     xhr.open('GET', src);
 
-    const intercepted = interceptor.interceptXhr(xhr, src);
-    if (!intercepted) {
-      xhr.abort();
-      tile.getImage().src = src;
-      return;
+    if (this.options.source instanceof WMSDataSource) {
+      WMSsource = this.options.source as WMSDataSource
+      if (WMSsource.options.secure) {
+        const token = this.tokenService.get();
+        console.log(token);
+        if (!token) {
+          return false;
+        } else {
+          xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+        }
+      } else {
+        const intercepted = interceptor.interceptXhr(xhr, src);
+        if (!intercepted) {
+          xhr.abort();
+          tile.getImage().src = src;
+          return;
+        }
+      }
+    } else {
+      const intercepted = interceptor.interceptXhr(xhr, src);
+      if (!intercepted) {
+        xhr.abort();
+        tile.getImage().src = src;
+        return;
+      }
     }
+
 
     xhr.responseType = 'arraybuffer';
 

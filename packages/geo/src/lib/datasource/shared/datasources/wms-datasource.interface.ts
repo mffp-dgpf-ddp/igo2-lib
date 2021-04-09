@@ -12,6 +12,7 @@ export interface WMSDataSourceOptions extends DataSourceOptions {
   crossOrigin?: string;
   projection?: string;
   resolutions?: number[];
+  secure?: boolean;
   serverType?: string;
   ratio?: number;
   ol?: olSourceImageWMS;

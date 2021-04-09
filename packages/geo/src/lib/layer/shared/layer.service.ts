@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import stylefunction from 'ol-mapbox-style/dist/stylefunction';
-import { AuthInterceptor } from '@igo2/auth';
+import { AuthInterceptor, TokenService } from '@igo2/auth';
 import { ObjectUtils } from '@igo2/utils';
 
 import {
@@ -48,6 +48,7 @@ export class LayerService {
     private http: HttpClient,
     private styleService: StyleService,
     private dataSourceService: DataSourceService,
+    private tokenService: TokenService,
     @Optional() private authInterceptor: AuthInterceptor
   ) {}
 
@@ -117,7 +118,7 @@ export class LayerService {
   }
 
   private createImageLayer(layerOptions: ImageLayerOptions): ImageLayer {
-    return new ImageLayer(layerOptions, this.authInterceptor);
+    return new ImageLayer(layerOptions, this.tokenService, this.authInterceptor);
   }
 
   private createTileLayer(layerOptions: TileLayerOptions): TileLayer {
