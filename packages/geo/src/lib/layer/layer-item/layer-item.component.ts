@@ -11,11 +11,15 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 import { Subscription, BehaviorSubject } from 'rxjs';
+import { Injector } from '@angular/core';
 
 import { MetadataLayerOptions } from '../../metadata/shared/metadata.interface';
 import { layerIsQueryable } from '../../query/shared/query.utils';
 import { Layer, TooltipType } from '../shared/layers';
 import { NetworkService, ConnectionState } from '@igo2/core';
+import { ConfigService } from '@igo2/core';
+
+import Cookies from 'js-cookie';
 
 @Component({
   selector: 'igo-layer-item',
@@ -24,7 +28,6 @@ import { NetworkService, ConnectionState } from '@igo2/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LayerItemComponent implements OnInit, OnDestroy {
-
   public focusedCls = 'igo-layer-item-focused';
 
   @Input()
@@ -32,7 +35,12 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     return this._activeLayer;
   }
   set activeLayer(value) {
-    if (value && this.layer && value.id === this.layer.id && !this.selectionMode) {
+    if (
+      value &&
+      this.layer &&
+      value.id === this.layer.id &&
+      !this.selectionMode
+    ) {
       this.layerTool$.next(true);
       this.renderer.addClass(this.elRef.nativeElement, this.focusedCls);
     } else {
@@ -118,7 +126,9 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     private networkService: NetworkService,
     private renderer: Renderer2,
     private elRef: ElementRef,
-    private cdRef: ChangeDetectorRef) {}
+    private cdRef: ChangeDetectorRef,
+    private injector: Injector
+  ) {}
 
   ngOnInit() {
     if (
@@ -138,10 +148,12 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     });
     this.tooltipText = this.computeTooltip();
 
-    this.network$$ = this.networkService.currentState().subscribe((state: ConnectionState) => {
-      this.state = state;
-      this.onResolutionChange();
-    });
+    this.network$$ = this.networkService
+      .currentState()
+      .subscribe((state: ConnectionState) => {
+        this.state = state;
+        this.onResolutionChange();
+      });
 
     this.layers$$ = this.layers$.subscribe(() => {
       if (this.layer && this.layer.options.active) {
@@ -159,6 +171,34 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     this.resolution$$.unsubscribe();
     this.network$$.unsubscribe();
     this.layers$$.unsubscribe();
+  }
+
+  isSecure(): boolean {
+    if (
+      this.layer.options &&
+      this.layer.options.sourceOptions &&
+      !this.layer.options.sourceOptions.secure
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  isLocked(): boolean {
+    let locked = true;
+    const config = this.injector.get(ConfigService);
+    const cookieName = config.getConfig('PSFAuth');
+    if (
+      this.layer.options.sourceOptions &&
+      this.layer.options.sourceOptions.secure &&
+      Cookies.get(cookieName)
+    ) {
+      locked = false;
+    }
+    if (locked) {
+      this.layer.visible = false;
+    }
+    return locked;
   }
 
   toggleLegend(collapsed: boolean) {
@@ -236,6 +276,6 @@ export class LayerItemComponent implements OnInit, OnDestroy {
 
   public check() {
     this.layerCheck = !this.layerCheck;
-    this.checkbox.emit({layer: this.layer, check: this.layerCheck});
+    this.checkbox.emit({ layer: this.layer, check: this.layerCheck });
   }
 }

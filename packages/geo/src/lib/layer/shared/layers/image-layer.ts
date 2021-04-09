@@ -37,10 +37,11 @@ export class ImageLayer extends Layer {
     const image = new olLayerImage(olOptions);
     if (this.authInterceptor) {
       (image.getSource() as any).setImageLoadFunction((tile, src) => {
-        this.customLoader(tile, src, this.authInterceptor);
+        if (!this.customLoader(tile, src, this.authInterceptor)) {
+          //Gestion message d'erreur
+        }
       });
     }
-
     return image;
   }
 
@@ -54,15 +55,14 @@ export class ImageLayer extends Layer {
   }
 
   private customLoader(tile, src, interceptor) {
-    let WMSsource: WMSDataSource
+    let WMSsource: WMSDataSource;
     const xhr = new XMLHttpRequest();
     xhr.open('GET', src);
 
     if (this.options.source instanceof WMSDataSource) {
-      WMSsource = this.options.source as WMSDataSource
+      WMSsource = this.options.source as WMSDataSource;
       if (WMSsource.options.secure) {
-        const token = this.tokenService.get();
-        console.log(token);
+        const token = this.tokenService.getAuthToken();
         if (!token) {
           return false;
         } else {
@@ -85,10 +85,9 @@ export class ImageLayer extends Layer {
       }
     }
 
-
     xhr.responseType = 'arraybuffer';
 
-    xhr.onload = function() {
+    xhr.onload = function () {
       const arrayBufferView = new Uint8Array((this as any).response);
       const blob = new Blob([arrayBufferView], { type: 'image/png' });
       const urlCreator = window.URL;

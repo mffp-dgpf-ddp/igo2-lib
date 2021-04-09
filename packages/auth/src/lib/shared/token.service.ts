@@ -1,5 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import jwtDecode from 'jwt-decode';
+import Cookies from 'js-cookie';
 
 import { ConfigService } from '@igo2/core';
 import { AuthOptions } from './auth.interface';
@@ -22,6 +23,12 @@ export class TokenService {
 
   get(): string {
     return localStorage.getItem(this.tokenKey);
+  }
+
+  getAuthToken(): string {
+    const config = this.injector.get(ConfigService);
+    const cookieName = config.getConfig('PSFAuth');
+    return Cookies.get(cookieName);
   }
 
   decode() {
