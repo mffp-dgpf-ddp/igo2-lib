@@ -29,6 +29,7 @@ import { layerIsQueryable, olLayerIsQueryable } from './query.utils';
 import { ctrlKeyDown } from '../../map/shared/map.utils';
 import { OlDragSelectInteraction } from '../../feature/shared/strategies/selection';
 import { VectorLayer } from '../../layer/shared/layers/vector-layer';
+import { exception } from 'console';
 
 /**
  * This directive makes a map queryable with a click of with a drag box.
@@ -220,7 +221,9 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
                 id: layerOL.values_._layer.id + '.' + newFeature.meta.id,
                 sourceTitle: layerOL.values_.title,
                 alias: this.queryService.getAllowedFieldsAndAlias(layer),
-                title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title
+                title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title,
+                excludeAttribute: newFeature.meta.excludeAttribute,
+                excludeAttributeOffline: newFeature.meta.excludeAttributeOffline
               };
               clickedFeatures.push(newFeature);
             } else {
@@ -233,7 +236,10 @@ export class QueryDirective implements AfterViewInit, OnDestroy {
                 id: layerOL.values_._layer.id + '.' + newFeature.meta.id,
                 sourceTitle: layerOL.values_.title,
                 alias: this.queryService.getAllowedFieldsAndAlias(layer),
-                title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title
+                title: this.queryService.getQueryTitle(newFeature, layer) || newFeature.meta.title,
+                excludeAttribute: newFeature.meta.excludeAttribute,
+                excludeAttributeOffline: newFeature.meta.excludeAttributeOffline
+
               };
               clickedFeatures.push(newFeature);
             }
