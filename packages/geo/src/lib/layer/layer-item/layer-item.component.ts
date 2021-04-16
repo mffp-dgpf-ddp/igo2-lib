@@ -29,6 +29,8 @@ import Cookies from 'js-cookie';
 })
 export class LayerItemComponent implements OnInit, OnDestroy {
   public focusedCls = 'igo-layer-item-focused';
+  public locked = false;
+  public secure = false;
 
   @Input()
   get activeLayer() {
@@ -165,6 +167,11 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     if (this.changeDetection) {
       this.changeDetection.subscribe(() => this.cdRef.detectChanges());
     }
+
+    this.secure = this.isSecure();
+    if (this.secure) {
+      this.locked = this.isLocked();
+    }
   }
 
   ngOnDestroy() {
@@ -188,10 +195,11 @@ export class LayerItemComponent implements OnInit, OnDestroy {
     let locked = true;
     const config = this.injector.get(ConfigService);
     const cookieName = config.getConfig('PSFAuth');
+    const cookie = Cookies.get(cookieName);
     if (
       this.layer.options.sourceOptions &&
       this.layer.options.sourceOptions.secure &&
-      Cookies.get(cookieName)
+      cookie !== undefined
     ) {
       locked = false;
     }
