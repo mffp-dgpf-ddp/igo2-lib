@@ -37,9 +37,7 @@ export class ImageLayer extends Layer {
     const image = new olLayerImage(olOptions);
     if (this.authInterceptor) {
       (image.getSource() as any).setImageLoadFunction((tile, src) => {
-        if (!this.customLoader(tile, src, this.authInterceptor)) {
-          //Gestion message d'erreur
-        }
+        this.customLoader(tile, src, this.authInterceptor)
       });
     }
     return image;
@@ -55,28 +53,19 @@ export class ImageLayer extends Layer {
   }
 
   private customLoader(tile, src, interceptor) {
-    let WMSsource: WMSDataSource;
     const xhr = new XMLHttpRequest();
     xhr.open('GET', src);
-
-    if (this.options.source instanceof WMSDataSource) {
-      WMSsource = this.options.source as WMSDataSource;
-      if (WMSsource.options.secure) {
-        const token = this.tokenService.getAuthToken();
-        if (!token) {
-          return false;
-        } else {
-          xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-        }
-      } else {
-        const intercepted = interceptor.interceptXhr(xhr, src);
-        if (!intercepted) {
-          xhr.abort();
-          tile.getImage().src = src;
-          return;
-        }
+    if (this.options.source instanceof WMSDataSource && this.options.source.options.secure) {
+      const token = this.tokenService.getAuthToken();
+      if (token) {
+        xhr.setRequestHeader('Authorization',`Bearer ${token}`);
       }
-    } else {
+      else {
+        super.visible=false;
+        super.collapsed=true;
+      }
+    } 
+    else {
       const intercepted = interceptor.interceptXhr(xhr, src);
       if (!intercepted) {
         xhr.abort();
