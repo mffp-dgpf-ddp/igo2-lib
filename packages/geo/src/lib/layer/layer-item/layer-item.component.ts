@@ -181,49 +181,49 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   }
 
   isSecure(): boolean {
-    if (
-      this.layer.options &&
-      this.layer.options.sourceOptions &&
-      !this.layer.options.sourceOptions.secure
-    ) {
-      return false;
-    }
-    return true;
+    return this.layer.options.sourceOptions &&
+      this.layer.options.sourceOptions.secure
   }
 
   isLocked(): boolean {
-    let locked = true;
-    const config = this.injector.get(ConfigService);
-    const cookieName = config.getConfig('PSFAuth');
-    const cookie = Cookies.get(cookieName);
-    if (
-      this.layer.options.sourceOptions &&
-      this.layer.options.sourceOptions.secure &&
-      cookie !== undefined
-    ) {
-      locked = false;
+    let locked = false;
+    
+    if (this.isSecure()) {
+      const config = this.injector.get(ConfigService);
+      const cookieName = config.getConfig('PSFAuth');
+      const cookie = Cookies.get(cookieName);
+      
+      locked = cookie === undefined
     }
-    if (locked) {
-      this.layer.visible = false;
-    }
+
     return locked;
   }
 
   toggleLegend(collapsed: boolean) {
+    if (this.isLocked()) collapsed = true;
+
     this.layer.legendCollapsed = collapsed;
     this.showLegend$.next(!collapsed);
   }
 
   toggleLegendOnClick() {
-    this.toggleLegend(this.showLegend$.value);
+    if (!this.isLocked()) {
+      this.toggleLegend(this.showLegend$.value);
+    }
   }
 
   toggleVisibility() {
-    this.layer.visible = !this.layer.visible;
-    if (this.toggleLegendOnVisibilityChange) {
-      this.toggleLegend(!this.layer.visible);
+    const currentLayerVisibility = this.layer.visible
+    if (!this.isLocked()) {
+      this.layer.visible = !currentLayerVisibility;
+      if (this.toggleLegendOnVisibilityChange) {
+        this.toggleLegend(currentLayerVisibility);
+      }
+      this.updateQueryBadge();
     }
-    this.updateQueryBadge();
+    else {
+      this.layer.visible = false;
+    }
   }
 
   computeTooltip(): string {
