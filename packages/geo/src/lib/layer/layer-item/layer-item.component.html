@@ -18,14 +18,14 @@
   </h4>
 
   <mat-icon
-    *ngIf="isSecure()"
+    *ngIf="isLocked()"
     matBadge="?"
     matBadgeColor="accent"
     matBadgeSize="small"
     matBadgePosition="after"
     [matBadgeHidden]="queryBadgeHidden$ | async"
     [ngClass]="{ disabled: !(inResolutionRange$ | async) }"
-    [svgIcon]="locked ? 'lock' : 'lock-open'"
+    [svgIcon]="'lock'"
   >
   </mat-icon>
 
