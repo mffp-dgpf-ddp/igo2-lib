@@ -32,7 +32,7 @@ export class VectorTileLayer extends Layer {
     const vectorTile = new olLayerVectorTile(olOptions);
     const vectorTileSource = vectorTile.getSource() as olSourceVectorTile;
 
-    
+    /*
     vectorTileSource.setTileLoadFunction((tile, url) => {
       const loader = this.customLoader(url, tile.getFormat(), this.authInterceptor, tile.onLoad.bind(tile));
       if (loader) {
@@ -40,7 +40,7 @@ export class VectorTileLayer extends Layer {
       }
     }
     );
-    
+    */
 
     return vectorTile;
   }
