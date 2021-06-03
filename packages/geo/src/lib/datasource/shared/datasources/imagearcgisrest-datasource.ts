@@ -29,18 +29,26 @@ export class ImageArcGISRestDataSource extends DataSource {
   }
 
   protected createOlSource(): ImageArcGISRest {
+    const params = this.options.layer === undefined ? this.options.params : Object.assign(
+      {LAYERS: `show:${this.options.layer}`},
+      this.options.params
+    );
+
+    if (typeof params.renderingRule === 'object') {
+      params.renderingRule = JSON.stringify(params.renderingRule);
+    }
 
     return new ImageArcGISRest({
       ratio: 1,
-      params: {LAYERS: `show:${this.options.layer}`},
+      params,
       url: this.options.url
     });
   }
 
   getLegend(): Legend[] {
-    const legendInfo = this.options.params.legendInfo;
+    const legendInfo = this.options.options?.legendInfo || this.params?.legendInfo;
     const legend = super.getLegend();
-    if (legendInfo === undefined || legend.length > 0) {
+    if (legendInfo === undefined || this.options.layer === undefined || legend.length > 0) {
       return legend;
     }
 
