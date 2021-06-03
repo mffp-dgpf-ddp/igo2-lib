@@ -8,10 +8,11 @@ import {
   OnInit,
   OnDestroy
 } from '@angular/core';
-import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import { userAgent } from '@igo2/utils';
 import { NetworkService, ConnectionState } from '@igo2/core';
 import { getEntityTitle, getEntityIcon } from '@igo2/common';
 import type { Toolbox } from '@igo2/common';
@@ -36,7 +37,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
   get source(): SearchSource {
     return this._source;
   }
-  set source(value: SearchSource ) {
+  set source(value: SearchSource) {
     this._source = value;
     this.cdRef.detectChanges();
   }
@@ -60,6 +61,7 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
 
   @Output() routeEvent = new EventEmitter<boolean>();
   @Output() selectFeature = new EventEmitter<boolean>();
+  @Output() htmlDisplayEvent = new EventEmitter<boolean>();
 
   /**
    * @internal
@@ -95,20 +97,32 @@ export class FeatureDetailsComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  resourceUrlByPassSanitizer(value): SafeResourceUrl {
+  urlSanitizer(value): SafeResourceUrl {
     return this.sanitizer.bypassSecurityTrustResourceUrl(value);
   }
 
-  htmlByPassSanitizer(value): SafeHtml {
-    return this.sanitizer.bypassSecurityTrustHtml(value);
+
+  isHtmlDisplay(): boolean {
+    if (this.feature && this.isObject(this.feature.properties) && this.feature.properties.target === 'iframe') {
+      this.htmlDisplayEvent.emit(true);
+      return true;
+    } else {
+      this.htmlDisplayEvent.emit(false);
+      return false;
+    }
   }
 
-  validateHtml(value): SafeHtml {
-    const valToCheck = value.toString().split(`onclick="`)[1]
-    if (valToCheck && /^\bcallAngularFunction\(\'\w+\.pdf\'\)\; return false\;/g.test(valToCheck)) {
-      value = this.htmlByPassSanitizer(value);
+  htmlSanitizer(value): SafeResourceUrl {
+    if (!value.body || userAgent.getBrowserName() === 'Internet Explorer') {
+      return;
     }
-    return value
+    const regexBase = /<base href="[\w:\/\.]+">/;
+    if (!regexBase.test(value.body)) {
+      const url = new URL(value.url);
+      value.body = value.body.replace('<head>', `<head><base href="${url.origin}">`);
+    }
+
+    return this.sanitizer.bypassSecurityTrustHtml(value.body);
   }
 
   isObject(value) {
