@@ -30,7 +30,7 @@ import { VectorLayer } from '../../layer/shared/layers/vector-layer';
 import { FeatureDataSource } from '../../datasource/shared/datasources/feature-datasource';
 import { DrawControl } from '../../geometry/shared/controls/draw';
 import { EntityRecord, EntityTableTemplate } from '@igo2/common';
-
+import {QueryService} from '../../query/shared/query.service';
 import OlStyle from 'ol/style/Style';
 import OlVectorSource from 'ol/source/Vector';
 import OlPoint from 'ol/geom/Point';
@@ -144,7 +144,8 @@ export class DrawComponent implements OnInit, OnDestroy {
         private formBuilder: FormBuilder,
         private drawStyleService: DrawStyleService,
         private dialog: MatDialog,
-        private drawIconService: DrawIconService
+        private drawIconService: DrawIconService,
+        private queryService: QueryService
     ) {
         this.buildForm();
         this.fillColor = this.drawStyleService.getFill();
@@ -345,6 +346,7 @@ export class DrawComponent implements OnInit, OnDestroy {
         });
 
         drawControl.setOlMap(this.map.ol);
+        this.queryService.queryEnabled = false;
     }
 
     /**
@@ -360,6 +362,7 @@ export class DrawComponent implements OnInit, OnDestroy {
 
         this.activeDrawControl.setOlMap(undefined);
         this.activeDrawControl = undefined;
+        this.queryService.queryEnabled = true;
     }
 
     /**
