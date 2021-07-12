@@ -50,7 +50,7 @@ export class SearchRolePrintService {
 
   public async exportRoleResultToPdf(keys: any, coordinates: Coordinates, map: IgoMap) {
     this.setDate();
-    const html = this.keysToHtmlTable(keys, 'Dossier : ' + keys['Nom'] + ', ' + keys['Prenom']);
+    const html = this.keysToHtmlTable(keys, '');
     if (html === null) {
       return new Promise<any>((resolve, reject) => {
         reject('Impossible de créer un pdf des résultats grif invalides');
