@@ -1,0 +1,43 @@
+<ion-app>
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start" >
+        <button
+          mat-icon-button
+          (click)="lastPage()">
+          <mat-icon svgIcon="arrow-left"></mat-icon>
+        </button>
+        </ion-buttons>
+        <ion-title class="ion-text-center">{{title}}</ion-title>
+        <ion-buttons slot="end">
+          <button
+            mat-icon-button
+            (click)="hideSearch()">
+          <mat-icon svgIcon="close"></mat-icon>
+        </button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content>
+    <ion-list>
+      <ion-item text-wrap *ngFor="let result of searchResults" button="true" detail="true" (click) = "focusResults(result)">
+        <ion-label>
+          <p>{{result["properties"]["Nom"] + ", " + result["properties"]["Prenom"]}}</p>
+          <p>{{result["properties"]["Adresse"] + ", " + result["properties"]["Ville"]}}</p>
+          <p>{{result["properties"]["mat18"]}}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+
+  <ion-footer>
+    <ion-grid>
+      <ion-row>
+        <ion-col col-6>
+          <ion-button fill="outline" color="primary" expand="block" (click)="lastPage()">Retour</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-footer>
+</ion-app>

@@ -14,6 +14,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { IonicModule } from '@ionic/angular';
+import { ReactiveFormsModule } from '@angular/forms'
 
 import { IgoLanguageModule } from '@igo2/core';
 import {
@@ -36,6 +38,8 @@ import { LayerLegendListBindingDirective } from './layer-legend-list/layer-legen
 import { TrackFeatureButtonComponent } from './track-feature-button/track-feature-button.component';
 import { LayerLegendListComponent } from './layer-legend-list/layer-legend-list.component';
 import { LayerLegendItemComponent } from './layer-legend-item/layer-legend-item.component';
+import { IgoMapModule } from '../map/map.module';
+import { MatSidenavModule } from '@angular/material/sidenav';
 
 @NgModule({
   imports: [
@@ -59,7 +63,11 @@ import { LayerLegendItemComponent } from './layer-legend-item/layer-legend-item.
     IgoCollapsibleModule,
     IgoImageModule,
     IgoPanelModule,
-    IgoMatBadgeIconModule
+    IgoMatBadgeIconModule,
+    IonicModule,
+    ReactiveFormsModule,
+    IgoMapModule,
+    MatSidenavModule
   ],
   exports: [
     LayerItemComponent,

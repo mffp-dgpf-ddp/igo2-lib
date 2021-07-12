@@ -273,13 +273,15 @@ export class LayerItemComponent implements OnInit, OnDestroy {
   }
 
   toggleLayerTool() {
-    this.layerTool$.next(!this.layerTool$.getValue());
-    if (this.layerTool$.getValue() === true) {
-      this.renderer.addClass(this.elRef.nativeElement, this.focusedCls);
-    } else {
-      this.renderer.removeClass(this.elRef.nativeElement, this.focusedCls);
+    if (!this.isLocked()){
+      this.layerTool$.next(!this.layerTool$.getValue());
+      if (this.layerTool$.getValue() === true) {
+        this.renderer.addClass(this.elRef.nativeElement, this.focusedCls);
+      } else {
+        this.renderer.removeClass(this.elRef.nativeElement, this.focusedCls);
+      }
+      this.action.emit(this.layer);
     }
-    this.action.emit(this.layer);
   }
 
   public check() {

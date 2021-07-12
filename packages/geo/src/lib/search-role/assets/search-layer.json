@@ -1,0 +1,45 @@
+{
+    "databaseToScreen": {
+        "mat18" : "Matricule 18",
+        "Prenom" : "Prénom",
+        "Nom" : "Nom",
+        "Ville" : "Ville",
+        "typePossession" : "Type de possession",
+        "Proprios" : "Propriétaire(s)",
+        "anneeRole" : "Année du role",
+        "annee_activation" : "Année d'activation",
+        "code_mun" : "Code municipal",
+        "Adresse" : "Adresse",
+        "designSecondaire" : "Désignation secondaire",
+        "id_provinc" : "Id provincial",
+        "munic" : "Municipalité",
+        "noLot" : "Numéro du lot",
+        "noLotNonRenove" : "Numéro du lot non rénové",
+        "nbr_coprop" : "Nombre de copropiétaires",
+        "nomCadNonRenove" : "Nom du cadastre non rénové",
+        "valBatim" : "Valeur du bâtiment",
+        "valImmeub" : "Valeur de l'immeuble",
+        "valTerrain" : "Valeur du terrain"
+    },
+
+    "order": 
+        [   "nbr_coprop",
+            "Proprios",
+            "id_provinc",
+            "code_mun",
+            "mat18",
+            "Adresse",
+            "munic",
+            "valBatim",
+            "valImmeub",
+            "valTerrain",
+            "anneeRole",
+            "annee_activation",
+            "designSecondaire",
+            "noLot",
+            "noLotNonRenove",
+            "nomCadNonRenove",
+            "typePossession"
+            
+        ]
+}

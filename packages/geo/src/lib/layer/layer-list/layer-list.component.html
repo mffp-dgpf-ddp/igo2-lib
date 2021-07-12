@@ -40,6 +40,19 @@
   </ng-container>
 
   <ng-content select="[igoLayerItemToolbar]"></ng-content>
+
+    <button *ngIf="isSearchable()"
+      class="search-button"
+      mat-icon-button
+      color="primary"
+      tooltip-position="below"
+      matTooltipShowDelay="500"
+      matTooltip="Rechercher"
+      (click)="showSearch()">
+      <mat-icon [matBadge]="(sortAlpha || onlyVisible || keyword) ? '!' : ''" matBadgeColor="warn" matBadgeSize="medium" [matBadgeHidden]="lowerDisabled"
+                svgIcon="magnify"></mat-icon>
+    </button>
+
     <!-- <label>{{ 'igo.geo.layer.opacity' | translate }} </label> -->
     <button
       class="opacity-button"

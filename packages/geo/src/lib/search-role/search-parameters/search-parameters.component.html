@@ -1,0 +1,81 @@
+<ion-app>
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start" >
+        <button
+          mat-icon-button
+          (click)="lastPage()">
+          <mat-icon svgIcon="arrow-left"></mat-icon>
+        </button>
+        </ion-buttons>
+        <ion-title class="ion-text-center">{{title}}</ion-title>
+        <ion-buttons slot="end">
+          <button
+            mat-icon-button
+            (click)="hideSearch()">
+          <mat-icon svgIcon="close"></mat-icon>
+        </button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+  
+  
+
+  <ion-content>
+
+    <ion-item>
+      <ion-grid>
+        <ion-row>
+          <ion-col col-6>
+            <ion-button [fill]="fillType('PROPRIO')" color="primary" expand="block" (click)="setSearchProprio()">Proprio</ion-button>
+          </ion-col>
+          <ion-col col-6>
+            <ion-button [fill]="fillType('Role')" color="primary" expand="block" (click)="setSearchRole()">Role</ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-item>
+
+      <ion-list>
+        <form [formGroup]='searchForm'>
+          <ion-item *ngFor="let control of searchForm.controls | keyvalue">
+            <ion-select (ionChange)="setSearchField($event, control)" value="getValue(control.key)" selectedText="{{labelList['databaseToScreen'][getValue(control.key)]}}" placeholder="Critère" text-center>
+              <ion-select-option *ngFor="let searchField of getSearchFields()" [value]="searchField">{{labelList["databaseToScreen"][searchField]}}</ion-select-option>
+            </ion-select>
+            <ion-input required type="text" [formControlName]="control.key"></ion-input>
+            <ion-icon (click)="removeSearchField(control)" name="close-circle"></ion-icon>
+          </ion-item>
+        </form>
+      </ion-list>
+  
+      <div class="bottom-buttons">
+        <div>
+        <button mat-raised-button
+        class="add-button"
+        (click)="addSearchField()"
+        [disabled]="maxCriterias()">
+          Ajouter un critère
+        </button>
+        </div>
+        &nbsp;
+        <div>
+        <button mat-raised-button
+        class="search-button"
+        (click)="searchLayer()">
+          Rechercher
+        </button>
+        </div>
+        </div>
+  
+  </ion-content>
+
+  <ion-footer>
+    <ion-grid>
+      <ion-row>
+        <ion-col col-6>
+          <ion-button fill="outline" color="primary" expand="block" (click)="lastPage()">Retour</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-footer>
+</ion-app>

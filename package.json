@@ -78,13 +78,16 @@
     "@angular/platform-browser-dynamic": "^10.0.3",
     "@angular/router": "^10.0.3",
     "@azure/msal-angular": "^1.1.1",
+    "@igo2/geo": "^1.7.2",
     "@ionic-native/core": "^5.10.0",
     "@ionic-native/file": "^5.6.0",
     "@ionic-native/file-opener": "^5.6.0",
     "@ionic-native/network": "^5.12.0",
-    "@ionic/angular": "^5.2.3",
+    "@ionic/angular": "^5.6.9",
     "@mat-datetimepicker/core": "^5.1.2",
     "@mdi/angular-material": "^5.3.45",
+    "@mffp.dgpf.ddp.techno/igo2": "^1.6.303",
+    "dom-to-image": "^2.6.0",
     "@ngx-translate/core": "^13.0.0",
     "@turf/buffer": "^5.1.5",
     "@turf/helpers": "^6.1.4",
@@ -122,7 +125,7 @@
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^0.1000.2",
+    "@angular-devkit/build-angular": "^0.1000.8",
     "@angular-devkit/build-ng-packagr": "^0.1000.2",
     "@angular/cli": "^10.0.2",
     "@angular/compiler-cli": "^10.0.3",
@@ -162,6 +165,7 @@
     "tslint": "~6.1.0",
     "typescript": "~3.9.6",
     "wait-on": "^5.1.0",
-    "webdriver-manager": "^12.1.6"
+    "webdriver-manager": "^12.1.6",
+    "@ionic/angular-toolkit": "latest"
   }
 }

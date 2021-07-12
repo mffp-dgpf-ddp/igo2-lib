@@ -1,0 +1,222 @@
+@import '../assets/media.scss';
+@import '../assets/variables.scss';
+@import '../assets/portal.variables.scss';
+
+#mapCard {
+    width: 90%;
+    height: 450px;
+    margin: auto;
+  }
+  
+  @media (min-width: 750px) {
+    #mapCard {
+      width: 400px;
+      height: 400px;
+      margin: auto;
+    }
+  }
+  
+  div {
+    overflow: auto;
+  }
+  
+  p {
+    font-size: 16px;
+  }
+
+
+/*** Main ***/
+:host {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/*** Menu button ***/
+
+.menu-button {
+  background-color: $app-background-color;
+  position: absolute;
+  left: $igo-margin;
+  top: $igo-margin;
+  z-index: 4;
+  border-radius: 0;
+}
+
+.menu-button ::ng-deep div.mat-button-ripple-round {
+  border-radius: 0;
+}
+
+/*** Map browser ***/
+igo-map-browser {
+  touch-action: none !important;
+  width: 100%;
+  height: 100%;
+}
+
+igo-map-browser ::ng-deep .ol-attribution {
+  left: 50px;
+  bottom: $igo-margin;
+  text-align: left;
+  padding: 0;
+  margin-right: 90px;
+  background-color: rgba(255, 255, 255, 0);
+  width: calc(100% - 500px);
+
+  &.ol-logo-only {
+    height: inherit;
+  }
+  &.ol-collapsed {
+    background: none;
+    button {
+      transform: none;
+    }
+  }
+  button {
+    transform: rotate(180deg);
+    background-color: white;
+    cursor: pointer;
+  }
+  &.ol-uncollapsible {
+    height: auto;
+  }
+}
+
+igo-map-browser.has-expansion-panel igo-baselayers-switcher {
+  bottom: 47px;
+}
+
+igo-map-browser.sidenav-offset-baselayers igo-baselayers-switcher {
+  left: 405px;
+}
+
+igo-map-browser ::ng-deep .ol-overlaycontainer-stopevent {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+}
+
+igo-map-browser.sidenav-offset ::ng-deep .ol-overlaycontainer-stopevent {
+  left: 400px;
+  width: calc(100% - 380px);
+
+  @include mobile {
+    display: none;
+  }
+}
+
+igo-map-browser.expansion-offset ::ng-deep .ol-overlaycontainer-stopevent {
+  bottom: 279px;
+}
+
+igo-map-browser.toast-offset-scale-line ::ng-deep .ol-overlaycontainer-stopevent ::ng-deep .ol-scale-line {
+  bottom: 50px;
+}
+
+igo-map-browser.toast-offset-attribution ::ng-deep .ol-overlaycontainer-stopevent ::ng-deep .ol-attribution {
+  @include mobile {
+    bottom: 50px;
+  }
+}
+
+/*** Search bar ***/
+igo-search-bar {
+  background-color: $app-background-color;
+  font-size: 16px;
+  position: absolute;
+  left: $search-bar-left;
+  top: $igo-margin;
+  z-index: 4;
+  width: $search-bar-width;
+  height: $igo-icon-size;
+  margin: 0 $igo-margin;
+
+  @include mobile {
+    width: $search-bar-width-mobile;
+    max-width: 350px;
+  }
+}
+
+/*** Sidenav ***/
+mat-sidenav-container {
+  height: 100%;
+  width: 100%;
+  background-color: #efefef;
+  z-index: 5;
+  display: unset;
+}
+
+mat-sidenav-content {
+  @include mobile {
+    z-index: auto;
+  }
+}
+
+/*** Expansion Panel ***/
+app-expansion-panel {
+  position: absolute;
+  bottom: 0;
+  overflow: hidden;
+  z-index: 5;
+
+  @include mobile {
+    @supports (-webkit-appearance:none) and (not (overflow:-webkit-marquee))
+    and (not (-ms-ime-align:auto)) and (not (-moz-appearance:none)) {
+      z-index: 1;
+    }
+  }
+}
+
+/*** Toast Panel ***/
+app-toast-panel {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  margin-left: -300px;
+  width: 600px;
+  z-index: 5;
+
+  @include mobile {
+    width: calc(100% - #{$app-footer-height});
+    left: $app-footer-height;
+    margin-left: 0;
+  }
+
+  @include tablet {
+    width: 500px;
+    left: calc(50% + 100px);
+  }
+}
+
+app-toast-panel.expansion-panel-expanded,
+app-toast-panel:not(.has-expansion-panel),
+app-toast-panel.app-toast-panel-opened {
+  @include mobile {
+    width: 100%;
+    left: 0;
+  }
+}
+
+app-toast-panel:not(.app-toast-panel-opened) {
+  ::ng-deep igo-panel ::ng-deep div.igo-panel-content {
+    visibility: hidden;
+  }
+}
+
+igo-geolocate-button {
+  margin-bottom: 85px;
+
+  @include mobile {
+    margin-bottom: 0px;
+  }
+  @include tablet {
+    margin-bottom: 0px;
+  }
+}
+
+igo-zoom-button {
+  @include tablet {
+    display: none;
+  }
+}

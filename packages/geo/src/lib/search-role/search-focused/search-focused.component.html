@@ -1,0 +1,74 @@
+<ion-app>
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start" >
+        <button
+          mat-icon-button
+          (click)="lastPage()">
+          <mat-icon svgIcon="arrow-left"></mat-icon>
+        </button>
+        </ion-buttons>
+        <ion-title class="ion-text-center">{{title}}</ion-title>
+        <ion-buttons slot="end">
+          <button
+            mat-icon-button
+            (click)="hideSearch()">
+          <mat-icon svgIcon="close"></mat-icon>
+        </button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <div *ngIf="this.RoleResults['properties']['Nom']">
+    <ion-item class="ion-text-wrap">
+      <ion-label class="ion-text-wrap"><div [innerHTML]="formatKey('Nom')"></div></ion-label>
+    </ion-item>
+    <ion-item class="ion-text-wrap">
+      <ion-label class="ion-text-wrap"><div [innerHTML]="formatKey('Prenom')"></div></ion-label>
+    </ion-item>
+  </div>
+    <ion-item class="ion-text-wrap" *ngFor="let key of labelList['order']">
+        <ion-label class="ion-text-wrap"><div [innerHTML]="formatKey(key)"></div></ion-label>
+    </ion-item>
+
+    
+
+        <ion-card id="mapCard">
+
+
+
+    <ion-toolbar color="light">
+      <ion-item>
+        <ion-label text-wrap text-center>
+          <b> Point GPS en degrés décimaux (latitude,longitude)</b>: <br> {{ RoleResults.geometry.coordinates[1]
+          }}, {{ RoleResults.geometry.coordinates[0] }}
+        </ion-label>
+
+        <ion-icon slot='end' name='open' (click)="openRapportInMap()"></ion-icon>
+      </ion-item>
+
+    </ion-toolbar>
+  
+
+<mat-sidenav-container>
+  <igo-map-browser [map]="map" [view]="view" igoOverlay></igo-map-browser>
+</mat-sidenav-container>
+</ion-card>
+
+&nbsp;
+</ion-content>
+
+<ion-footer>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-6>
+        <ion-button fill="outline" color="primary" expand="block" (click)="lastPage()">Retour</ion-button>
+      </ion-col>
+      <ion-col col-6>
+        <ion-button fill="outline" color="primary" expand="block" (click)="exportToPDF()">Exporter en PDF</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-footer>
+</ion-app>
+
